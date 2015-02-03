@@ -11,14 +11,6 @@ import org.specs2.matcher.Expectable
 class SchematronBodyMatcherTest extends Specification with AllExpectations {
     isolated
 
-    var expectedBody: Option[String] = None
-    var actualBody: Option[String] = None
-    var matchers: Option[Map[String, Map[String, String]]] = None
-    val expected = () => Request("", "", None, None, expectedBody, matchers)
-    val actual = () => Request("", "", None, None, actualBody, None)
-
-    var diffconfig = DiffConfig(structural = true)
-
     val matcher = new SchematronBodyMatcher()
 
     def matchBody(schema:Schema, actualBody:String) = {
@@ -27,9 +19,8 @@ class SchematronBodyMatcherTest extends Specification with AllExpectations {
 
 
     def containMessage(s: String) = (a: List[BodyMismatch]) => (
-                a.exists((m: BodyMismatch) => m.mismatch.get == s),
-                          s"$a does not contain '$s'"
-                                  )
+       a.exists((m: BodyMismatch) => m.mismatch.get == s),
+                                     s"$a does not contain '$s'")
 
     val simpleFeed = <feed xmlns="http://www.w3.org/2005/Atom">
      
@@ -93,7 +84,6 @@ class SchematronBodyMatcherTest extends Specification with AllExpectations {
       }
 
       "return an error if the input is not an xml document" in {
-        
         matchBody(schema, "hello world") must containMessage("The actual value could not be parsed as xml")
       }
     }
