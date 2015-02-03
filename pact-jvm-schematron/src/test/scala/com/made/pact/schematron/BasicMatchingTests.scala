@@ -8,7 +8,7 @@ import org.specs2.specification.AllExpectations
 import org.specs2.matcher.Expectable
 
 @RunWith(classOf[JUnitRunner])
-class JsonBodyMatcherTest extends Specification with AllExpectations {
+class SchematronBodyMatcherTest extends Specification with AllExpectations {
     isolated
 
     var expectedBody: Option[String] = None
@@ -25,6 +25,11 @@ class JsonBodyMatcherTest extends Specification with AllExpectations {
       matcher.matchSchema(schema, actualBody)
     }
 
+
+    def containMessage(s: String) = (a: List[BodyMismatch]) => (
+                a.exists((m: BodyMismatch) => m.mismatch.get == s),
+                          s"$a does not contain '$s'"
+                                  )
 
     val simpleFeed = <feed xmlns="http://www.w3.org/2005/Atom">
      
@@ -63,11 +68,19 @@ class JsonBodyMatcherTest extends Specification with AllExpectations {
         new Pattern("entry", "Entry assertions", List(
           new Assertion("content[@type='xhtml']", "There must be a content element containing xhtml"),
           new Assertion("count(content) = 1", "There must be exactly one content element"),
+          new Assertion("title", "There must be a title element"),
           new Assertion("link[@rel='self']", "There must be a self link")))))
 
       "return no errors for a valid request" in{
-        matchBody(schema, simpleFeed.text) must beEmpty   
+        matchBody(schema, simpleFeed.toString()) must beEmpty   
       }
 
+      "return an error if an element is missing" in {
+        val actual = <entry>
+                      <link rel="self" />
+                      <content type="xhtml" />
+                    </entry>
+        matchBody(schema, actual.toString()) must containMessage("There must be a title element")
+      }
     }
 }

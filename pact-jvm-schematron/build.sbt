@@ -9,5 +9,6 @@ libraryDependencies ++= Seq(
   "au.com.dius" % "pact-jvm-matchers_2.10" % "2.1.10",                                                                                                   
   "org.apache.commons" % "commons-lang3" % "3.3.2",
   "org.specs2"   %% "specs2"         % "2.3.11" % "test",
-  "junit"        %  "junit"          % "4.11"  % "test"
+  "junit"        %  "junit"          % "4.11"  % "test",
+  "org.slf4j"    %  "slf4j-simple"   % "1.7.10" % "test"
 )
