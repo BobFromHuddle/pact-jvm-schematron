@@ -82,5 +82,19 @@ class SchematronBodyMatcherTest extends Specification with AllExpectations {
                     </entry>
         matchBody(schema, actual.toString()) must containMessage("There must be a title element")
       }
+
+      "return an error if an attribute is missing" in {
+        val actual = <entry>
+                       <link href="foo" />
+                       <title>Hooray</title>
+                       <content type="xhtml">blah</content>
+                     </entry>
+        matchBody(schema, actual.toString()) must containMessage("There must be a self link")
+      }
+
+      "return an error if the input is not an xml document" in {
+        
+        matchBody(schema, "hello world") must containMessage("The actual value could not be parsed as xml")
+      }
     }
 }
